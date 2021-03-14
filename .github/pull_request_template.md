@@ -10,7 +10,7 @@ Optionally, you may even name the PR the same as the JIRA ticket, for example:
 
 Description of the change and why it was made.
 
-## Definiton of Done
+## Definition of Done
 
 This PR:
 
