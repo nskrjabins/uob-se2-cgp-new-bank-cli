@@ -42,6 +42,11 @@ public class ExampleClient extends Thread{
       try {
         while(true) {
           String command = userInput.readLine();
+          // close on an End-of-file (EOF) (Ctrl-D on the terminal)
+          if (command == null) {
+            // exit code 0 for a graceful exit
+            System.exit(0);
+          }
           bankServerOut.println(command);
         }
       } catch (IOException e) {
