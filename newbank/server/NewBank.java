@@ -6,6 +6,7 @@ public class NewBank {
 
   private static final NewBank bank = new NewBank();
   private HashMap<String,Customer> customers;
+  Help help = new Help();
 
   private NewBank() {
     customers = new HashMap<>();
@@ -42,6 +43,7 @@ public class NewBank {
     if(customers.containsKey(customer.getKey())) {
       switch(request) {
       case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
+      case "HELP" : return help.printHelp;
       default : return "FAIL";
       }
     }
@@ -51,5 +53,4 @@ public class NewBank {
   private String showMyAccounts(CustomerID customer) {
     return (customers.get(customer.getKey())).accountsToString();
   }
-
 }
