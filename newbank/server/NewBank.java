@@ -42,6 +42,7 @@ public class NewBank {
     if(customers.containsKey(customer.getKey())) {
       switch(request) {
       case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
+      case "HELP" : return NewBankClientHandler.printHelp();
       default : return "FAIL";
       }
     }
@@ -51,5 +52,4 @@ public class NewBank {
   private String showMyAccounts(CustomerID customer) {
     return (customers.get(customer.getKey())).accountsToString();
   }
-
 }
