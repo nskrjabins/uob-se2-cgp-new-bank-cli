@@ -60,6 +60,8 @@ public class NewBank {
             return NOT_ACCOUNT_NAME_MSG;
           }
           return addAccount(customer_session, cmd[1]);
+        case "HELP" :
+          return NewBankClientHandler.printHelp();
         case "MOVE":
           return "MOVE PLACEHOLDER";
         case "PAY":

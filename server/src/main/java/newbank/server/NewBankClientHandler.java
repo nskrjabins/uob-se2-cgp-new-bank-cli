@@ -50,7 +50,8 @@ public class NewBankClientHandler extends Thread{
         customer = loginUser();
       }
       // if the user is authenticated then get requests from the user and process them
-      out.println("Log In Successful. What do you want to do?");
+      out.println("Login successful, welcome to NewBank!");
+      out.println(printHelp());
       while(true) {
         String request = in.readLine();
         System.out.println("Request from " + customer.getKey());
@@ -71,4 +72,30 @@ public class NewBankClientHandler extends Thread{
     }
   }
 
+  /**
+   * Help function provides user with list of available command options.
+   * @return The available options will be listed.
+   */
+  public static String printHelp(){
+    return "\nHere are your available options:\n"+
+            "\n"+
+            "SHOWMYACCOUNTS\n"+
+            "Returns a list of all the customers accounts along with their current balance\n"+
+            "e.g. Main: 1000.0\n"+
+            "\n"+
+            "NEWACCOUNT <Name>\n"+
+            "e.g. NEWACCOUNT Savings\n"+
+            "Returns SUCCESS or FAIL\n"+
+            "\n"+
+            "MOVE <Amount> <From> <To>\n"+
+            "e.g. MOVE 100 Main Savings\n"+
+            "Returns SUCCESS or FAIL\n"+
+            "\n"+
+            "PAY <Person/Company> <Ammount>\n"+
+            "e.g. PAY John 100\n"+
+            "Returns SUCCESS or FAIL\n"+
+            "\n"+
+            "\n"+
+            "To view these options again, please type 'HELP' at anytime.\n";
+  }
 }
