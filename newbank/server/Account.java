@@ -16,7 +16,11 @@ public class Account {
   }
 
   public String toString() {
-    return (accountName + " (Account No:" + accountNumber + ", " + "Sort Code: " + sortCode + "): " + openingBalance);
+    return ("Account Name: " + accountName +
+            "\nAccount No: " + accountNumber +
+            "\n" + "Sort Code: " + sortCode +
+            "\nBalance: " + openingBalance +
+            "\n");
   }
 
 }
