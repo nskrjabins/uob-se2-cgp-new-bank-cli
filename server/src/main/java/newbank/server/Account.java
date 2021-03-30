@@ -1,4 +1,6 @@
 package newbank.server;
+import java.util.*;
+
 /**
  * Customer Account Controller Class
  *
@@ -9,6 +11,13 @@ public class Account {
   private String accountName;
   private double openingBalance;
   private Customer owner = null;
+  private int accountNumber;
+
+  public int accountNumberGenerator() {
+    Random rnd = new Random();
+    int n = 1000000 + rnd.nextInt(9000000);
+    return n;
+  }
 
   /**
    * Creates an instance
@@ -19,6 +28,7 @@ public class Account {
   public Account(String accountName, double openingBalance) {
     this.accountName = accountName;
     this.openingBalance = openingBalance;
+    this.accountNumber = accountNumberGenerator();
   }
 
   /**
@@ -32,7 +42,10 @@ public class Account {
   }
 
   public String toString() {
-    return (accountName + ": " + openingBalance);
+    return ("Account Name: " + accountName +
+            "\nAccount No: " + accountNumber +
+            "\nBalance: " + openingBalance +
+            "\n");
   }
 
 }
