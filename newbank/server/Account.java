@@ -1,4 +1,6 @@
 package newbank.server;
+import java.util.*;
+
 
 public class Account {
 
@@ -6,13 +8,28 @@ public class Account {
   private double openingBalance;
   private int accountNumber;
   private int sortCode;
+  private Date openDate;
 
-  public Account(String accountName, double openingBalance, int accountNumber, int sortCode) {
+
+
+  public Date todaysDate() {
+    Date today = Calendar.getInstance().getTime();
+    System.out.print(today);
+    return today;
+  }
+
+  public int accountNumberGenerator() {
+    Random rnd = new Random();
+    int n = 1000000 + rnd.nextInt(9000000);
+    return n;
+  }
+
+  public Account(String accountName, double openingBalance, int sortCode) {
     this.accountName = accountName;
     this.openingBalance = openingBalance;
-    this.accountNumber = accountNumber;
+    this.accountNumber = accountNumberGenerator();
     this.sortCode = sortCode;
-
+    this.openDate = todaysDate();
   }
 
   public String toString() {
@@ -20,7 +37,7 @@ public class Account {
             "\nAccount No: " + accountNumber +
             "\n" + "Sort Code: " + sortCode +
             "\nBalance: " + openingBalance +
+            "\nAccount Opened: " + openDate +
             "\n");
   }
-
 }
