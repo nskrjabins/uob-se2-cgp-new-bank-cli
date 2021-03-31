@@ -13,6 +13,13 @@ public class Account {
   private Customer owner = null;
   private int accountNumber;
   private int sortCode;
+  private Date openDate;
+
+  public Date todaysDate() {
+    Date today = Calendar.getInstance().getTime();
+    System.out.print(today);
+    return today;
+  }
 
   public int accountNumberGenerator() {
     Random rnd = new Random();
@@ -37,6 +44,7 @@ public class Account {
     this.openingBalance = openingBalance;
     this.accountNumber = accountNumberGenerator();
     this.sortCode = sortCodeGenerator();
+    this.openDate = todaysDate();
   }
 
   /**
@@ -54,6 +62,7 @@ public class Account {
             "\nAccount No: " + accountNumber +
             "\n" + "Sort Code: " + sortCode +
             "\nBalance: " + openingBalance +
+            "\nAccount Opened: " + openDate +
             "\n");
   }
 
