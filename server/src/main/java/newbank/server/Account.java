@@ -12,10 +12,17 @@ public class Account {
   private double openingBalance;
   private Customer owner = null;
   private int accountNumber;
+  private int sortCode;
 
   public int accountNumberGenerator() {
     Random rnd = new Random();
     int n = 1000000 + rnd.nextInt(9000000);
+    return n;
+  }
+
+  public int sortCodeGenerator() {
+    Random rnd = new Random();
+    int n = 100000 + rnd.nextInt(900000);
     return n;
   }
 
@@ -29,6 +36,7 @@ public class Account {
     this.accountName = accountName;
     this.openingBalance = openingBalance;
     this.accountNumber = accountNumberGenerator();
+    this.sortCode = sortCodeGenerator();
   }
 
   /**
@@ -44,6 +52,7 @@ public class Account {
   public String toString() {
     return ("Account Name: " + accountName +
             "\nAccount No: " + accountNumber +
+            "\n" + "Sort Code: " + sortCode +
             "\nBalance: " + openingBalance +
             "\n");
   }
