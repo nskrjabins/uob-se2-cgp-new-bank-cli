@@ -1,6 +1,9 @@
 package newbank.server;
 
+import java.io.PrintWriter;
 import java.util.HashMap;
+
+import newbank.server.CustomerID;
 
 public class NewBank {
   public static final String NOT_ACCOUNT_NAME_MSG = "PLEASE PROVIDE AN ACCOUNT NAME";
@@ -26,6 +29,28 @@ public class NewBank {
     } catch (Customer.AccountAlreadyExists e) {
       System.out.println("Error creating user");
     }
+  }
+
+  public CustomerID addCustomer(String customerUsername, String customerPassword, PrintWriter out) {
+    try {
+      if (usernameExists(customerUsername)) {
+        out.println("\nThe selected username already exists, please pick another one.");
+        return null;
+      } else {
+        Customer newCustomer = new Customer();
+        newCustomer.addAccount("Main", 0);
+        customers.put(customerUsername, newCustomer);
+        out.println("\nYour account has been created!");
+        return new CustomerID(customerUsername); 
+      }
+    } catch (Customer.AccountAlreadyExists e) {
+      out.println("\nError creating user");
+      return null;
+    }
+  }
+
+  private boolean usernameExists(String customerUsername) {
+    return customers.containsKey(customerUsername);
   }
 
   public static NewBank getBank() {
