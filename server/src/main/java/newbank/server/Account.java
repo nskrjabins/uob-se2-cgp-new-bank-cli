@@ -41,20 +41,10 @@ public class Account {
    * */
   public Account(String accountName, double openingBalance) {
     this.accountName = accountName;
-    this.openingBalance = openingBalance;
+    this.openingBalance = 0.0;
     this.accountNumber = accountNumberGenerator();
     this.sortCode = sortCodeGenerator();
     this.openDate = todaysDate();
-  }
-
-  /**
-   * Creates an instance
-   *
-   * @param accountName {@code String}
-   * */
-  public Account(String accountName) {
-    this.accountName = accountName;
-    this.openingBalance = 0.0;
   }
 
   public String toString() {
