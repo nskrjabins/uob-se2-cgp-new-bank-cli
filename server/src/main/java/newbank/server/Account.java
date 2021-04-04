@@ -15,19 +15,19 @@ public class Account {
   private int sortCode;
   private Date openDate;
 
-  public Date todaysDate() {
+  private Date todaysDate() {
     Date today = Calendar.getInstance().getTime();
     System.out.print(today);
     return today;
   }
 
-  public int accountNumberGenerator() {
+  private int accountNumberGenerator() {
     Random rnd = new Random();
     int n = 1000000 + rnd.nextInt(9000000);
     return n;
   }
 
-  public int sortCodeGenerator() {
+  private int sortCodeGenerator() {
     Random rnd = new Random();
     int n = 100000 + rnd.nextInt(900000);
     return n;
