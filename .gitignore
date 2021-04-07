@@ -61,3 +61,8 @@ nb-configuration.xml
 .DS_Store
 .idea/
 uob-se2-cgp-new-bank-cli.iml
+
+##############################
+## Persistence
+##############################
+.newBankDatabase
