@@ -35,4 +35,22 @@ public class Account {
     return (accountName + ": " + openingBalance);
   }
 
+  /**
+   * Transfer money between two accounts
+   *
+   * @param amount the amount to transfer
+   * @param transferAccount the account to transfer money to
+   * @return true if the money was transferred and false if there was not enough money
+   */
+  public boolean transfer(int amount, Account transferAccount){
+    // Check the account has enough money to transfer
+    if (this.openingBalance >= amount){
+      this.openingBalance -= amount;
+      transferAccount.openingBalance += amount;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 }

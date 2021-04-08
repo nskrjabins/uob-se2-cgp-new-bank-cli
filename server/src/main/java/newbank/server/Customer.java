@@ -65,4 +65,33 @@ public class Customer {
   public Account getAccount(String accountName) {
     return this.accounts.get(accountName);
   }
+
+  /**
+   * Move money between users accounts if possible
+   * @param amount the amount to move
+   * @param from the account to move money from
+   * @param to the account to move money to
+   * @return null if the transfer succeeded, otherwise a string containing the reason for the failure
+   */
+  public String moveMoneyBetweenAccounts(int amount, String from, String to) {
+    Account fromAccount = getAccount(from);
+    Account toAccount = getAccount(to);
+
+    // Return an error message if either of the account do not exist
+    if (fromAccount == null) {
+      return "The account to transfer from does not exist.";
+    }
+    if (toAccount == null){
+      return "The account to transfer to does not exist.";
+    }
+
+    // Try to transfer money
+    boolean hasTransferredMoney = fromAccount.transfer(amount, toAccount);
+
+    if (hasTransferredMoney) {
+      return null;
+    } else {
+      return "The account does not have enough funds.";
+    }
+  }
 }

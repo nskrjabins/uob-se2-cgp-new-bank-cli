@@ -88,7 +88,7 @@ public class NewBank {
         case "HELP" :
           return NewBankClientHandler.printHelp();
         case "MOVE":
-          return "MOVE PLACEHOLDER";
+          return moveMoneyBetweenAccounts(customer_session, cmd);
         case "PAY":
           return "PAY PLACEHOLDER";
         case "":
@@ -120,6 +120,46 @@ public class NewBank {
 
   private String showMyAccounts(Customer customer) {
     return customer.accountsToString();
+  }
+
+  /**
+   * Parse and excute an instruction to move money between accounts
+   *
+   * @param customer the logged in customer
+   * @param userInput the command line arguments provided by the user
+   * @return a string detailing if the transfer was successful or an error message
+   */
+  private String moveMoneyBetweenAccounts(Customer customer, String[] userInput){
+    assert userInput[0].equals("MOVE");
+
+    // Ensure the user has entered the correct number of arguments
+    if (userInput.length != 4){
+      return "FAIL: wrong number of arguments.\nPlease try again";
+    }
+
+    // Convert the amount to an integer
+    int amount;
+    try{
+      amount = Integer.parseInt(userInput[1]);
+    }
+    catch (NumberFormatException ex){
+      return "FAIL: invalid number for amount\nPlease try again";
+    }
+
+    // Check the transfer amount is not negative
+    if (amount < 0) {
+      return "FAIL: invalid transfer amount\nPlease try again";
+    }
+
+    // Try to move the customers money
+    String errorMessage = customer.moveMoneyBetweenAccounts(amount, userInput[2], userInput[3]);
+
+    // Inform the user of the transfer results
+    if (errorMessage == null) {
+      return "SUCCESS, Anything else?";
+    } else {
+      return String.format("FAIL: %s\nPlease try again", errorMessage);
+    }
   }
 
 }
