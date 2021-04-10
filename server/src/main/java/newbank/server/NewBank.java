@@ -97,6 +97,8 @@ public class NewBank {
           return "PAY PLACEHOLDER";
         case "REQUEST-LOAN":
           return requestLoan(customer_session, cmd);
+        case "PAY-LOAN":
+          return payLoan(customer_session, cmd);
         case "GIVE-LOAN":
           return giveLoan(customer_session, cmd);
         case "":
@@ -278,5 +280,71 @@ public class NewBank {
   }
 
 
+  /**
+   *  Allow users to pay their loan
+   *
+   * @param customer the logged in customer
+   * @param userInput the command line arguments provided by the user
+   * @return a string detailing if the loan has been paid
+   */
+  private String payLoan(Customer customer, String[] userInput){
+    // Ensure the user has entered the correct number of arguments
+    if (userInput.length != 3){
+      return "FAIL: wrong number of arguments.\nPlease try again";
+    }
+
+    Account userAccount;
+    int amount;
+
+    // Get the users account
+    userAccount = customer.getAccount(userInput[1]);
+    if (userAccount == null) {
+      return "FAIL: invalid account name\nPlease try again";
+    }
+
+    // Convert the amount to an integer
+    try{
+      amount = Integer.parseInt(userInput[2]);
+    }
+    catch (NumberFormatException ex){
+      return "FAIL: invalid number for amount\nPlease try again";
+    }
+
+    // Check the pay amount is not negative
+    if (amount < 0) {
+      return "FAIL: invalid loan amount\nPlease try again";
+    }
+
+    for (Loan loan:loans
+    ) {
+
+      // Check for the loan belonging to the user
+      if (loan.getCustomerRequestingLoan() != customer){
+        continue;
+      }
+      if(loan.getAmount() != amount){
+        continue;
+      }
+
+      // Only a paid loan can be paid back
+      if(loan.getLoanProvider() == null){
+        continue;
+      }
+
+      // Pay the loan
+      Account accountToTransferTo = loan.getLoanProvider().receivingAccount();
+      boolean succeed = userAccount.transfer(amount, accountToTransferTo);
+      if (succeed){
+        // Remove the paid back loan from the list of loans
+        loans.remove(loan);
+        return "SUCCESS: The loan has been paid back.";
+      }
+      else {
+        return "FAIL: You do not have enough funds to pay back the loan.";
+      }
+    }
+
+    return "FAIL: no loan request matched the provided details.\nPlease try again";
+  }
 
 }
