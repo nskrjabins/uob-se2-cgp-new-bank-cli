@@ -1,7 +1,9 @@
 package newbank.server;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import newbank.server.CustomerID;
 
@@ -15,9 +17,11 @@ public class NewBank {
 
   private static final NewBank bank = new NewBank();
   private HashMap<String,Customer> customers;
+  private List<Loan> loans;
 
   public NewBank() {
     customers = new HashMap<>();
+    loans = new ArrayList<>();
     addTestData();
   }
 
@@ -91,6 +95,8 @@ public class NewBank {
           return moveMoneyBetweenAccounts(customer_session, cmd);
         case "PAY":
           return "PAY PLACEHOLDER";
+        case "REQUEST-LOAN":
+          return requestLoan(customer_session, cmd);
         case "":
           return SELECT_ACTION_MSG; // On user enter pressed without typing a command
         default:
@@ -161,5 +167,40 @@ public class NewBank {
       return String.format("FAIL: %s\nPlease try again", errorMessage);
     }
   }
+
+  /**
+   *  Allow users to request a loan
+   *
+   * @param customer the logged in customer
+   * @param userInput the command line arguments provided by the user
+   * @return a string detailing if the loan request has been accepted
+   */
+  private String requestLoan(Customer customer, String[] userInput){
+
+    // Ensure the user has entered the correct number of arguments
+    if (userInput.length != 2){
+      return "FAIL: wrong number of arguments.\nPlease try again";
+    }
+
+    // Convert the amount to an integer
+    int amount;
+    try{
+      amount = Integer.parseInt(userInput[1]);
+    }
+    catch (NumberFormatException ex){
+      return "FAIL: invalid number for amount\nPlease try again";
+    }
+
+    // Check the loan amount is not negative
+    if (amount < 0) {
+      return "FAIL: invalid loan amount\nPlease try again";
+    }
+
+    Loan newLoanRequest = new Loan(amount, customer);
+    loans.add(newLoanRequest);
+    return "SUCCESS: Your loan has been requested.";
+  }
+
+
 
 }
