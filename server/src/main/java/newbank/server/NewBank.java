@@ -97,6 +97,8 @@ public class NewBank {
           return "PAY PLACEHOLDER";
         case "REQUEST-LOAN":
           return requestLoan(customer_session, cmd);
+        case "GIVE-LOAN":
+          return giveLoan(customer_session, cmd);
         case "":
           return SELECT_ACTION_MSG; // On user enter pressed without typing a command
         default:
@@ -199,6 +201,80 @@ public class NewBank {
     Loan newLoanRequest = new Loan(amount, customer);
     loans.add(newLoanRequest);
     return "SUCCESS: Your loan has been requested.";
+  }
+
+  /**
+   *  Allow users to give a loan
+   *
+   * @param customer the logged in customer
+   * @param userInput the command line arguments provided by the user
+   * @return a string detailing if the loan has been given
+   */
+  private String giveLoan(Customer customer, String[] userInput){
+
+    // Ensure the user has entered the correct number of arguments
+    if (userInput.length != 4){
+      return "FAIL: wrong number of arguments.\nPlease try again";
+    }
+
+    Account userAccount;
+    int amount;
+    String receiversUsername = userInput[2];
+
+    // Get the user account
+    userAccount = customer.getAccount(userInput[1]);
+    if (userAccount == null) {
+      return "FAIL: invalid account name\nPlease try again";
+    }
+
+    // Convert the amount to an integer
+    try{
+      amount = Integer.parseInt(userInput[3]);
+    }
+    catch (NumberFormatException ex){
+      return "FAIL: invalid number for amount\nPlease try again";
+    }
+
+    // Check the loan amount is not negative
+    if (amount < 0) {
+      return "FAIL: invalid loan amount\nPlease try again";
+    }
+
+    Customer receiver = customers.get(receiversUsername);
+
+    if (receiver == null) {
+      return "FAIL: invalid receiver\nPlease try again";
+    }
+
+    for (Loan loan:loans
+         ) {
+      // Skip over any loan that is not the loan we are looking for
+      if (loan.getCustomerRequestingLoan() != receiver){
+        continue;
+      }
+      if(loan.getAmount() != amount){
+        continue;
+      }
+
+      // A loan can only be provided by one user
+      if(loan.getLoanProvider() != null){
+        continue;
+      }
+
+      //Actually provide the loan
+      Account accountToTransferTo = loan.getCustomerRequestingLoan().receivingAccount();
+      boolean succeed = userAccount.transfer(amount, accountToTransferTo);
+      if (succeed){
+        loan.setLoanProvider(customer);
+        return "SUCCESS: The loan has been provided.";
+      }
+      else {
+        return "FAIL: You do not have enough funds.";
+      }
+    }
+
+    return "FAIL: no loan request matched the provided details.\nPlease try again";
+
   }
 
 

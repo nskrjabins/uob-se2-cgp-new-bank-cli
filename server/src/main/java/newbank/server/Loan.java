@@ -15,4 +15,19 @@ public class Loan {
         this.loanProvider = null;
     }
 
+    public int getAmount() {
+        return amount;
+    }
+
+    public Customer getCustomerRequestingLoan() {
+        return customerRequestingLoan;
+    }
+
+    public Customer getLoanProvider() {
+        return loanProvider;
+    }
+
+    public void setLoanProvider(Customer loanProvider) {
+        this.loanProvider = loanProvider;
+    }
 }
