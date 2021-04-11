@@ -65,6 +65,18 @@ Database db = new Database("myCustomPath/");
 Database db = new Database();
 ```
 
+### Create a database or work on an existing one:
+
+You can create a database from scratch by using the `create` method or initiate a database from existing data with the `init` method:
+
+````java
+db.create();
+````
+OR
+````java
+db.init();
+````
+
 ### Create a table 
 
 To create a new table you can just use the `addTable` function and pass three parameters:
