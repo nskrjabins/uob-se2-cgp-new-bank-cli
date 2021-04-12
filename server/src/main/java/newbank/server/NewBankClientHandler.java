@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import newbank.server.CustomerID;
 
@@ -96,66 +98,17 @@ public class NewBankClientHandler extends Thread{
    * @return Password meets security requirements.
    */
   private static boolean isValidPassword(String password){
-    if (!((password.length() >= 9)
-            && (password.length() <= 15))) {
+    String regExpn =
+            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,15}$";
+    CharSequence inputString = password;
+    Pattern pattern = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
+    Matcher matcher = pattern.matcher(inputString);
+    if (matcher.matches())
+      return true;
+    else
       return false;
-    }
-    if (password.contains(" ")) {
-      return false;
-    }
-    if (true) {
-      int count = 0;
-      for (int i = 0; i <= 9; i++) {
-        String str1 = Integer.toString(i);
-        if (password.contains(str1)) {
-          count = 1;
-        }
-      }
-      if (count == 0) {
-        return false;
-      }
-    }
-    if (!(password.contains("@") || password.contains("#")
-            || password.contains("!") || password.contains("~")
-            || password.contains("$") || password.contains("%")
-            || password.contains("^") || password.contains("&")
-            || password.contains("*") || password.contains("(")
-            || password.contains(")") || password.contains("-")
-            || password.contains("+") || password.contains("/")
-            || password.contains(":") || password.contains(".")
-            || password.contains(", ") || password.contains("<")
-            || password.contains(">") || password.contains("?")
-            || password.contains("|"))) {
-      return false;
-    }
-    if (true) {
-      int count = 0;
-      for (int i = 65; i <= 90; i++) {
-        char c = (char)i;
-        String str1 = Character.toString(c);
-        if (password.contains(str1)) {
-          count = 1;
-        }
-      }
-      if (count == 0) {
-        return false;
-      }
-    }
-    if (true) {
-      int count = 0;
-      for (int i = 90; i <= 122; i++) {
-        char c = (char)i;
-        String str1 = Character.toString(c);
-        if (password.contains(str1)) {
-          count = 1;
-        }
-      }
-      if (count == 0) {
-        return false;
-      }
-    }
-    return true;
   }
+
 
   /**
    * Keep creating a new user until a unique username and a valid password are provided.
