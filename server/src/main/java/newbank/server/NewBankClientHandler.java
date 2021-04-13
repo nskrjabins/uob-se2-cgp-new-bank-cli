@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import newbank.server.CustomerID;
 
@@ -59,16 +61,54 @@ public class NewBankClientHandler extends Thread{
    * Creates a new user. As of now only a unique username and a strong password are
    * required to create a new user. By default a 'Main' Account with a balance of 0 will be created
    * for the new user.
+   * Added functionality to check password strength and enforce security requirements.
    * @return A new customer or null.
    * @throws IOException
    */
   private CustomerID createNewUser() throws IOException {
     out.println("\nEnter Username");
     String userName = in.readLine();
-    out.println("\nEnter Password");
+    out.println(
+            "\n* Password length should be between 9 to 15 characters.\n"
+            + "* Password should not contain any spaces.\n"
+            + "* Password should contain at least one digit(0-9).\n"
+            + "* Password should contain at least one lowercase letter(a-z).\n"
+            + "* Password should contain at least one uppercase letter(A-Z).\n"
+            + "* Password should contain at least one special character ( @, #, %, &, !, $, etc….).\n"
+            + "\nEnter Password"
+    );
     String password = in.readLine();
+    if (isValidPassword(password)) {
+      out.println("\nValid Password");
+    }
+    else {
+      out.println(
+              "\nInvalid Password\n"
+              + "\nYour password did not match the security requirements.\n"
+              + "\nAccount was not created, you will be returned to the menu.\n"
+      );
+      return loginScreen();
+    }
     return bank.addCustomer(userName, password, out);
   }
+
+  /**
+   * Check for password against requirement parameters.
+   * @param password
+   * @return Password meets security requirements.
+   */
+  private static boolean isValidPassword(String password){
+    String regExpn =
+            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,15}$";
+    CharSequence inputString = password;
+    Pattern pattern = Pattern.compile(regExpn,Pattern.CASE_INSENSITIVE);
+    Matcher matcher = pattern.matcher(inputString);
+    if (matcher.matches())
+      return true;
+    else
+      return false;
+  }
+
 
   /**
    * Keep creating a new user until a unique username and a valid password are provided.
@@ -163,5 +203,4 @@ public class NewBankClientHandler extends Thread{
       }
     }
   }
-
 }
