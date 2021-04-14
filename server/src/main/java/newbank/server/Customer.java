@@ -40,22 +40,6 @@ public class Customer {
   }
 
   /**
-   * Adds a new account to a customer.
-   *
-   * @param accountName {@code String}
-   *
-   * @return {@code Account} newly created account
-   * @throws AccountAlreadyExists If the Account doesn't exist
-   * */
-  public Account addAccount(String accountName) throws AccountAlreadyExists {
-    if(this.accounts.get(accountName) != null) {
-      throw new AccountAlreadyExists("There's an existing account with this name");
-    }
-    accounts.put(accountName, new Account(accountName));
-    return this.accounts.get(accountName);
-  }
-
-  /**
    * Retrieves a customer account by name.
    *
    * @param accountName {@code String}

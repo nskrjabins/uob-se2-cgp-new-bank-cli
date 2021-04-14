@@ -38,7 +38,8 @@ public class NewBank {
         return null;
       } else {
         Customer newCustomer = new Customer();
-        newCustomer.addAccount("Main", 0);
+        // Setting 1000 as opening balance for testing purposes.
+        newCustomer.addAccount("Main", 1000.0);
         customers.put(customerUsername, newCustomer);
         out.println("\nYour account has been created!");
         return new CustomerID(customerUsername); 
@@ -110,7 +111,7 @@ public class NewBank {
    * */
   private String addAccount(Customer customer, String name) {
     try {
-      customer.addAccount(name);
+      customer.addAccount(name, 1000.0);
       return String.format("'%s' %s. %s", name, ACCOUNT_CREATED_SUCCESSFULLY_MSG, ANYTHING_ELSE_MSG);
     } catch (Customer.AccountAlreadyExists error) {
       System.out.printf("Error: %s", error.getMessage());

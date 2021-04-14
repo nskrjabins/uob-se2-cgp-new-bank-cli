@@ -41,7 +41,7 @@ public class Account {
    * */
   public Account(String accountName, double openingBalance) {
     this.accountName = accountName;
-    this.openingBalance = 0.0;
+    this.openingBalance = openingBalance;
     this.accountNumber = accountNumberGenerator();
     this.sortCode = sortCodeGenerator();
     this.openDate = todaysDate();
