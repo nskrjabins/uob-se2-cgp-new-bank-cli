@@ -78,4 +78,12 @@ public class Customer {
       return "The account does not have enough funds.";
     }
   }
+
+  /**
+   * Get an account into which money can be transferred when the customer take out a loan.
+   * @return the account to transfer into.
+   */
+  public Account receivingAccount(){
+    return getAccount("main");
+  }
 }

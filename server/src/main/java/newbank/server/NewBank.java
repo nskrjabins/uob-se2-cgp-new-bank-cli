@@ -1,7 +1,9 @@
 package newbank.server;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import newbank.server.CustomerID;
 
@@ -15,9 +17,11 @@ public class NewBank {
 
   private static final NewBank bank = new NewBank();
   private HashMap<String,Customer> customers;
+  private List<Loan> loans;
 
   public NewBank() {
     customers = new HashMap<>();
+    loans = new ArrayList<>();
     addTestData();
   }
 
@@ -92,6 +96,12 @@ public class NewBank {
           return moveMoneyBetweenAccounts(customer_session, cmd);
         case "PAY":
           return "PAY PLACEHOLDER";
+        case "REQUEST-LOAN":
+          return requestLoan(customer_session, cmd);
+        case "PAY-LOAN":
+          return payLoan(customer_session, cmd);
+        case "GIVE-LOAN":
+          return giveLoan(customer_session, cmd);
         case "":
           return SELECT_ACTION_MSG; // On user enter pressed without typing a command
         default:
@@ -161,6 +171,181 @@ public class NewBank {
     } else {
       return String.format("FAIL: %s\nPlease try again", errorMessage);
     }
+  }
+
+  /**
+   *  Allow users to request a loan
+   *
+   * @param customer the logged in customer
+   * @param userInput the command line arguments provided by the user
+   * @return a string detailing if the loan request has been accepted
+   */
+  private String requestLoan(Customer customer, String[] userInput){
+
+    // Ensure the user has entered the correct number of arguments
+    if (userInput.length != 2){
+      return "FAIL: wrong number of arguments.\nPlease try again";
+    }
+
+    // Convert the amount to an integer
+    int amount;
+    try{
+      amount = Integer.parseInt(userInput[1]);
+    }
+    catch (NumberFormatException ex){
+      return "FAIL: invalid number for amount\nPlease try again";
+    }
+
+    // Check the loan amount is not negative
+    if (amount < 0) {
+      return "FAIL: invalid loan amount\nPlease try again";
+    }
+
+    Loan newLoanRequest = new Loan(amount, customer);
+    loans.add(newLoanRequest);
+    return "SUCCESS: Your loan has been requested.";
+  }
+
+  /**
+   *  Allow users to give a loan
+   *
+   * @param customer the logged in customer
+   * @param userInput the command line arguments provided by the user
+   * @return a string detailing if the loan has been given
+   */
+  private String giveLoan(Customer customer, String[] userInput){
+
+    // Ensure the user has entered the correct number of arguments
+    if (userInput.length != 4){
+      return "FAIL: wrong number of arguments.\nPlease try again";
+    }
+
+    Account userAccount;
+    int amount;
+    String receiversUsername = userInput[2];
+
+    // Get the user account
+    userAccount = customer.getAccount(userInput[1]);
+    if (userAccount == null) {
+      return "FAIL: invalid account name\nPlease try again";
+    }
+
+    // Convert the amount to an integer
+    try{
+      amount = Integer.parseInt(userInput[3]);
+    }
+    catch (NumberFormatException ex){
+      return "FAIL: invalid number for amount\nPlease try again";
+    }
+
+    // Check the loan amount is not negative
+    if (amount < 0) {
+      return "FAIL: invalid loan amount\nPlease try again";
+    }
+
+    Customer receiver = customers.get(receiversUsername);
+
+    if (receiver == null) {
+      return "FAIL: invalid receiver\nPlease try again";
+    }
+
+    for (Loan loan:loans
+         ) {
+      // Skip over any loan that is not the loan we are looking for
+      if (loan.getCustomerRequestingLoan() != receiver){
+        continue;
+      }
+      if(loan.getAmount() != amount){
+        continue;
+      }
+
+      // A loan can only be provided by one user
+      if(loan.getLoanProvider() != null){
+        continue;
+      }
+
+      //Actually provide the loan
+      Account accountToTransferTo = loan.getCustomerRequestingLoan().receivingAccount();
+      boolean succeed = userAccount.transfer(amount, accountToTransferTo);
+      if (succeed){
+        loan.setLoanProvider(customer);
+        return "SUCCESS: The loan has been provided.";
+      }
+      else {
+        return "FAIL: You do not have enough funds.";
+      }
+    }
+
+    return "FAIL: no loan request matched the provided details.\nPlease try again";
+
+  }
+
+
+  /**
+   *  Allow users to pay their loan
+   *
+   * @param customer the logged in customer
+   * @param userInput the command line arguments provided by the user
+   * @return a string detailing if the loan has been paid
+   */
+  private String payLoan(Customer customer, String[] userInput){
+    // Ensure the user has entered the correct number of arguments
+    if (userInput.length != 3){
+      return "FAIL: wrong number of arguments.\nPlease try again";
+    }
+
+    Account userAccount;
+    int amount;
+
+    // Get the users account
+    userAccount = customer.getAccount(userInput[1]);
+    if (userAccount == null) {
+      return "FAIL: invalid account name\nPlease try again";
+    }
+
+    // Convert the amount to an integer
+    try{
+      amount = Integer.parseInt(userInput[2]);
+    }
+    catch (NumberFormatException ex){
+      return "FAIL: invalid number for amount\nPlease try again";
+    }
+
+    // Check the pay amount is not negative
+    if (amount < 0) {
+      return "FAIL: invalid loan amount\nPlease try again";
+    }
+
+    for (Loan loan:loans
+    ) {
+
+      // Check for the loan belonging to the user
+      if (loan.getCustomerRequestingLoan() != customer){
+        continue;
+      }
+      if(loan.getAmount() != amount){
+        continue;
+      }
+
+      // Only a paid loan can be paid back
+      if(loan.getLoanProvider() == null){
+        continue;
+      }
+
+      // Pay the loan
+      Account accountToTransferTo = loan.getLoanProvider().receivingAccount();
+      boolean succeed = userAccount.transfer(amount, accountToTransferTo);
+      if (succeed){
+        // Remove the paid back loan from the list of loans
+        loans.remove(loan);
+        return "SUCCESS: The loan has been paid back.";
+      }
+      else {
+        return "FAIL: You do not have enough funds to pay back the loan.";
+      }
+    }
+
+    return "FAIL: no loan request matched the provided details.\nPlease try again";
   }
 
 }
